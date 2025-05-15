@@ -1,0 +1,3 @@
+#!/bin/bash
+TARGET=$1
+nmap -A $TARGET -oN /reports/nmap_$TARGET.txt

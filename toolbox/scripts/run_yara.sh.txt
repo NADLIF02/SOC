@@ -1,0 +1,4 @@
+#!/bin/bash
+RULE=$1
+TARGET=$2
+yara $RULE $TARGET > /reports/yara_scan.txt

@@ -1,0 +1,4 @@
+#!/bin/bash
+TARGET=$1
+echo "[*] Analyse avec radare2 de $TARGET"
+r2 -A -q "$TARGET" -c "aaaa; afl; pdf @ main; q" > /reports/radare2_$TARGET.txt

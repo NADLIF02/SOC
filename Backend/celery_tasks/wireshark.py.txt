@@ -1,0 +1,12 @@
+from . import app
+import subprocess
+import os
+
+@app.task
+def run_tshark_analysis(interface='eth0', duration=30):
+    pcap_path = f"/reports/tshark_capture.pcap"
+    try:
+        subprocess.run(['timeout', str(duration), 'tshark', '-i', interface, '-w', pcap_path], check=True)
+        return {'status': 'success', 'pcap_file': pcap_path}
+    except subprocess.CalledProcessError as e:
+        return {'status': 'error', 'error': str(e)}

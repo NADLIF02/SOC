@@ -1,0 +1,14 @@
+from . import app
+import subprocess
+import os
+
+@app.task
+def run_yara_scan(rule_file, target_path):
+    output_path = f"/reports/yara_scan.txt"
+    try:
+        result = subprocess.check_output(['yara', rule_file, target_path], stderr=subprocess.STDOUT)
+        with open(output_path, 'w') as f:
+            f.write(result.decode())
+        return {'status': 'success', 'report_path': output_path}
+    except subprocess.CalledProcessError as e:
+        return {'status': 'error', 'error': e.output.decode()}

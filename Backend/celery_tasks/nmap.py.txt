@@ -1,0 +1,14 @@
+from . import app
+import subprocess
+import os
+
+@app.task
+def run_nmap_scan(target):
+    output_path = f"/reports/nmap_{target.replace('.', '_')}.txt"
+    try:
+        result = subprocess.check_output(['nmap', '-A', target], stderr=subprocess.STDOUT)
+        with open(output_path, 'w') as f:
+            f.write(result.decode())
+        return {'status': 'success', 'report_path': output_path}
+    except subprocess.CalledProcessError as e:
+        return {'status': 'error', 'error': e.output.decode()}

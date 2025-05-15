@@ -1,0 +1,46 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from celery_tasks.nmap_scan import run_nmap_scan
+from celery_tasks.yara_analysis import run_yara_scan
+from celery_tasks.metasploit import run_metasploit
+from celery_tasks.wireshark_analysis import run_tshark_analysis
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route("/")
+def index():
+    return jsonify({"message": "SOC Toolbox API Running"}), 200
+
+@app.route("/scan/nmap", methods=["POST"])
+def scan_nmap():
+    data = request.json
+    target = data.get("target")
+    task = run_nmap_scan.delay(target)
+    return jsonify({"task_id": task.id}), 202
+
+@app.route("/scan/yara", methods=["POST"])
+def scan_yara():
+    data = request.json
+    rule = data.get("rule")
+    target = data.get("target")
+    task = run_yara_scan.delay(rule, target)
+    return jsonify({"task_id": task.id}), 202
+
+@app.route("/scan/metasploit", methods=["POST"])
+def scan_metasploit():
+    data = request.json
+    rhost = data.get("target")
+    exploit = data.get("exploit")
+    task = run_metasploit.delay(rhost, exploit)
+    return jsonify({"task_id": task.id}), 202
+
+@app.route("/scan/wireshark", methods=["POST"])
+def scan_wireshark():
+    data = request.json
+    interface = data.get("interface", "eth0")
+    task = run_tshark_analysis.delay(interface)
+    return jsonify({"task_id": task.id}), 202
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

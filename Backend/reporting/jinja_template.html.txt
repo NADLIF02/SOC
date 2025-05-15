@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Sécurité – {{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 40px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rapport de Sécurité : {{ title }}</h1>
+        <p><strong>Date :</strong> {{ date }}</p>
+        <p><strong>Cible :</strong> {{ target }}</p>
+        <hr>
+        <h2>Résultat brut :</h2>
+        <pre>{{ result }}</pre>
+    </div>
+</body>
+</html>

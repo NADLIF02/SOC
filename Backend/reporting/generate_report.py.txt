@@ -1,0 +1,25 @@
+import os
+from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
+
+TEMPLATE_DIR = os.path.dirname(__file__)
+OUTPUT_DIR = "/reports"
+
+def generate_html_report(tool_name, target_ip, result_text):
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    template = env.get_template("jinja_template.html")
+
+    rendered = template.render(
+        title=tool_name,
+        target=target_ip,
+        date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        result=result_text
+    )
+
+    filename = f"{tool_name.lower()}_{target_ip.replace('.', '_')}.html"
+    output_path = os.path.join(OUTPUT_DIR, filename)
+
+    with open(output_path, "w") as f:
+        f.write(rendered)
+
+    return output_path

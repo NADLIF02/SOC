@@ -1,0 +1,57 @@
+import React, { useState } from "react";
+
+function App() {
+  const [target, setTarget] = useState("");
+  const [taskId, setTaskId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleNmapScan = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:5000/scan/nmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target }),
+      });
+      if (!response.ok) throw new Error("Erreur lors de la requête");
+      const data = await response.json();
+      setTaskId(data.task_id);
+    } catch (err) {
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
+      <h1>SOC Toolbox - Lancer un scan Nmap</h1>
+      <input
+        type="text"
+        placeholder="Adresse IP cible"
+        value={target}
+        onChange={(e) => setTarget(e.target.value)}
+        style={{ width: "100%", padding: 8, fontSize: 16 }}
+      />
+      <button
+        onClick={handleNmapScan}
+        disabled={loading || !target}
+        style={{ marginTop: 10, padding: 10, fontSize: 16 }}
+      >
+        {loading ? "Scan en cours..." : "Lancer le scan"}
+      </button>
+
+      {taskId && (
+        <p style={{ marginTop: 20 }}>
+          Scan lancé avec succès, ID de tâche: <strong>{taskId}</strong>
+        </p>
+      )}
+      {error && <p style={{ marginTop: 20, color: "red" }}>{error}</p>}
+    </div>
+  );
+}
+
+export default App;
